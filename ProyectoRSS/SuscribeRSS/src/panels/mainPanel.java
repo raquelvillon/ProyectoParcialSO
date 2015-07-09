@@ -15,6 +15,8 @@ import javax.swing.JCheckBox;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import semaphore.BoundedSemaphore;
+import semaphore.Consumidor;
 import semaphore.ProcessExclusion;
 import sucriberss.CellRenderer;
 import sucriberss.HeaderCellRenderer;
@@ -33,6 +35,7 @@ public class mainPanel extends javax.swing.JPanel {
     int alto=100;
     int ancho= 0;
     int frecuencia=60;
+    private ArrayList<Feed> feedlt;
     /**
      * Creates new form mainPanel
      */
@@ -245,10 +248,11 @@ public class mainPanel extends javax.swing.JPanel {
     
     private void suscribeBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suscribeBtnMouseClicked
         
+        
         int numeroRSS=0;
         
         ArrayList<Feed> rsslt=new ArrayList<>();
-        
+        feedlt = new ArrayList<>();
 //        recorre la lista de los canales y obtiene solo los que estan marcados
 //        y los agrega a rsslt
         for(Feed i: lt){
@@ -256,11 +260,12 @@ public class mainPanel extends javax.swing.JPanel {
                 rsslt.add(i);
             }
         }
-        
+
         final int numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
         
 //        semaforo que permite un solo acceso a la vez
-        Semaphore semaphore = new Semaphore(numberOfPermits, true); 
+        Semaphore semaphore = new Semaphore(0, true); 
+        BoundedSemaphore semaphore2 = new BoundedSemaphore(numberOfProcesses,1); 
         
 //        lista de hilos
         ProcessExclusion p[] = new ProcessExclusion[numberOfProcesses];
@@ -268,10 +273,19 @@ public class mainPanel extends javax.swing.JPanel {
 //        inicializando todos los hilos con sus respectivos canales
         for (int i = 0; i < numberOfProcesses; i++)
         {
-          p[i] = new ProcessExclusion(semaphore);
+          p[i] = new ProcessExclusion(semaphore, semaphore2);
           p[i].setThreadId(p[i].hashCode());
           p[i].setFeed(rsslt.get(i));
-          p[i].start(); //inicializando el hilo
+          p[i].setFeedlt(feedlt);
+        }
+        
+        Consumidor consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
+        consumidor.setThreadId(consumidor.hashCode());
+        consumidor.start();
+        
+        for (int i = 0; i < numberOfProcesses; i++)
+        {
+            p[i].start();
         }
     }//GEN-LAST:event_suscribeBtnMouseClicked
     

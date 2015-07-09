@@ -6,6 +6,9 @@
 package semaphore;
 
 import Entities.Feed;
+import Entities.FeedMessage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,17 +17,26 @@ import sucriberss.RSSFeedParser;
 /**
  *
  * @author Raquel Villon
- * Hilos para manejar los canales y la escritura de las noticias en el buffer
- * fuente: http://www.informit.com/articles/article.aspx?p=1339471&seqNum=2
  */
 public class ProcessExclusion extends Thread
 {
  private int threadId;
  private Semaphore semaphore;
+ private BoundedSemaphore mutex;
  private Feed feed;
+ private ArrayList<Feed> feedlt;
  
-    public ProcessExclusion(Semaphore semaphore) {
+    public ProcessExclusion(Semaphore semaphore, BoundedSemaphore mutex) {
       this.semaphore = semaphore;
+      this.mutex= mutex;
+    }
+
+    public ArrayList<Feed> getFeedlt() {
+        return feedlt;
+    }
+
+    public void setFeedlt(ArrayList<Feed> feedlt) {
+        this.feedlt = feedlt;
     }
 
     public Semaphore getSemaphore() {
@@ -56,41 +68,43 @@ public class ProcessExclusion extends Thread
    int sleepPeriod = random(500);
     try {
        sleep(sleepPeriod);
+        
     } catch (InterruptedException e) {
     }
  }
 
  private void noncriticalCode()
  {
-   busyCode();
+   //busyCode();
  }
 
- private void criticalCode(String message)
+ private void criticalCode(Feed feed, FeedMessage message)
  {
-//    rss.getEntries().add(message);
-//    ltmensaje.add(rss);
-      System.out.println(message);
-
+   //busyCode(); 
+   feed.getMessages().add(message);
+   feedlt.add(feed);   
  }
 
  public void run()
  {
     try {
-//        abre el canal
        RSSFeedParser parser = new RSSFeedParser(feed.getLink());
-       
-       Feed feed = parser.readFeed();
-       
-       feed.getMessages().stream().forEach((message) -> {
-           //por cada noticia leida 
+       Feed feeds = parser.readFeed();
+       List<FeedMessage> ltfeed = feeds.getMessages();
+       for(FeedMessage i: ltfeed){
            try {
-                semaphore.acquire();
-                criticalCode(message.toString());
+                mutex.take();
+                Feed newfeed = new Feed(feeds.getId(),feeds.getTitle(),feeds.getLink(),feeds.getAuthor(),feeds.getDescription(),feeds.getLanguage(),feeds.getCopyright(),feeds.getPubDate());
+                criticalCode(newfeed,i);
+                mutex.release();
+                
                 semaphore.release();
+//                try{sleep(200);
+//                }catch(Exception io){}
            } catch (InterruptedException ex) {
                Logger.getLogger(ProcessExclusion.class.getName()).log(Level.SEVERE, null, ex);
            }
-       });
+       }
     } catch (Exception e) {
        System.out.println("Exception " + e.toString());
     }
