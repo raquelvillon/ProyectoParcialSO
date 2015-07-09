@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import sucriberss.CellRenderer;
+import sucriberss.ConnectionLimiter;
 import sucriberss.HeaderCellRenderer;
 import sucriberss.RSSFeedParser;
 
@@ -30,6 +31,7 @@ public class mainPanel extends javax.swing.JPanel {
     int alto=100;
     int ancho= 0;
     int frecuencia=60;
+    private ConnectionLimiter conn;
     /**
      * Creates new form mainPanel
      */
@@ -53,30 +55,11 @@ public class mainPanel extends javax.swing.JPanel {
         rs.readFeedfile();
         lt= rs.getLtfeed();
         llenarlista();
+        radioButton10s.setSelected(true);
+        conn = new ConnectionLimiter(1);
         setVisible(false);
     }
 
-    public class hilorss extends Thread {
-        Feed rss;
-        public hilorss(Feed rss){
-            this.rss=rss;
-        }
-        @Override
-        public void run() {    
-            lectura(rss);
-        }
-    }
-
-    public void lectura(Feed rss){
-        RSSFeedParser parser = new RSSFeedParser(rss.getLink());
-        Feed feed = parser.readFeed();
-        feed.getMessages().stream().forEach((message) -> {
-            rss.getEntries().add(message);
-            ltmensaje.add(rss);
-            System.out.println(message);
-        });
-    }
-    
     public static void reiniciarJTable(javax.swing.JTable Tabla){
         DefaultTableModel modelo = (DefaultTableModel) Tabla.getModel();
         while(modelo.getRowCount()>0)modelo.removeRow(0);
@@ -145,6 +128,11 @@ public class mainPanel extends javax.swing.JPanel {
         radioButton10s.setSelected(true);
         radioButton10s.setText("10 seconds");
         radioButton10s.setActionCommand("10");
+        radioButton10s.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioButton10sActionPerformed(evt);
+            }
+        });
         add(radioButton10s, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 140, -1));
 
         frecuencyRadioButton.add(radioButton30s);
@@ -187,6 +175,11 @@ public class mainPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setMinWidth(0);
@@ -224,6 +217,20 @@ public class mainPanel extends javax.swing.JPanel {
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_refreshBtnActionPerformed
+
+    private void radioButton10sActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioButton10sActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_radioButton10sActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        int row = jTable1.getSelectedRow();
+        int col = jTable1.getSelectedColumn();
+        if(col==1){
+            Boolean b = (Boolean)jTable1.getValueAt(row, col);
+            lt.get(row).setSubscrito(!b);
+            jTable1.setValueAt(!b, row, col);
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

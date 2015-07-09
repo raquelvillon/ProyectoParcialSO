@@ -22,6 +22,8 @@ public class Feed {
     public String language;
     public String copyright;
     public String pubDate;
+    public boolean subscrito=false;
+    public int frecuency=60;
     public List<FeedMessage> entries = new ArrayList<>();
 
     public Feed(String id, String title, String link, String author, String description, String language, String copyright, String pubDate) {
@@ -104,6 +106,23 @@ public class Feed {
     public List<FeedMessage> getEntries() {
         return entries;
     }
+
+    public int getFrecuency() {
+        return frecuency;
+    }
+
+    public void setFrecuency(int frecuency) {
+        this.frecuency = frecuency;
+    }
+    
+    public boolean isSubscrito() {
+        return subscrito;
+    }
+
+    public void setSubscrito(boolean subscrito) {
+        this.subscrito = subscrito;
+    }
+    
     @Override
     public String toString() {
       return "Feed [copyright=" + copyright + "\ndescription=" + description
