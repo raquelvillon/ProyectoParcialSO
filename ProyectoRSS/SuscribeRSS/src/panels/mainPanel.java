@@ -9,13 +9,14 @@ import Entities.Feed;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import semaphore.ProcessExclusion;
 import sucriberss.CellRenderer;
-import sucriberss.ConnectionLimiter;
 import sucriberss.HeaderCellRenderer;
 import sucriberss.RSSFeedParser;
 
@@ -27,11 +28,11 @@ import sucriberss.RSSFeedParser;
 public class mainPanel extends javax.swing.JPanel {
     ArrayList<Feed> lt;
     ArrayList<Feed> ltmensaje = new ArrayList<>();
+    final int numberOfPermits = 1;
     Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
     int alto=100;
     int ancho= 0;
     int frecuencia=60;
-    private ConnectionLimiter conn;
     /**
      * Creates new form mainPanel
      */
@@ -56,7 +57,6 @@ public class mainPanel extends javax.swing.JPanel {
         lt= rs.getLtfeed();
         llenarlista();
         radioButton10s.setSelected(true);
-        conn = new ConnectionLimiter(1);
         setVisible(false);
     }
 
@@ -100,6 +100,7 @@ public class mainPanel extends javax.swing.JPanel {
         radioButton5m = new javax.swing.JRadioButton();
         radioButton10m = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         suscribeBtn = new javax.swing.JButton();
@@ -154,6 +155,9 @@ public class mainPanel extends javax.swing.JPanel {
         radioButton10m.setText("10 minutes");
         radioButton10m.setActionCommand("600");
         add(radioButton10m, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 130, -1));
+
+        jScrollPane1.setViewportView(jPanel1);
+
         add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 100, 460, 360));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -194,6 +198,11 @@ public class mainPanel extends javax.swing.JPanel {
         add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 370, 170));
 
         suscribeBtn.setText("Suscribe");
+        suscribeBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                suscribeBtnMouseClicked(evt);
+            }
+        });
         suscribeBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 suscribeBtnActionPerformed(evt);
@@ -231,13 +240,52 @@ public class mainPanel extends javax.swing.JPanel {
             jTable1.setValueAt(!b, row, col);
         }
     }//GEN-LAST:event_jTable1MouseClicked
-
+    
+    /*Function to get the channels and creating the threads*/
+    
+    private void suscribeBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suscribeBtnMouseClicked
+        
+        int numeroRSS=0;
+        
+        ArrayList<Feed> rsslt=new ArrayList<>();
+        
+//        recorre la lista de los canales y obtiene solo los que estan marcados
+//        y los agrega a rsslt
+        for(Feed i: lt){
+            if(i.isSubscrito()){
+                rsslt.add(i);
+            }
+        }
+        
+        final int numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
+        
+//        semaforo que permite un solo acceso a la vez
+        Semaphore semaphore = new Semaphore(numberOfPermits, true); 
+        
+//        lista de hilos
+        ProcessExclusion p[] = new ProcessExclusion[numberOfProcesses];
+        
+//        inicializando todos los hilos con sus respectivos canales
+        for (int i = 0; i < numberOfProcesses; i++)
+        {
+          p[i] = new ProcessExclusion(semaphore);
+          p[i].setThreadId(p[i].hashCode());
+          p[i].setFeed(rsslt.get(i));
+          p[i].start(); //inicializando el hilo
+        }
+    }//GEN-LAST:event_suscribeBtnMouseClicked
+    
+//    funcion que abre las url y se parsea el contenido xml
+    public void lectura(Feed rss){
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup frecuencyRadioButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
