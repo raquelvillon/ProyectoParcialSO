@@ -5,18 +5,18 @@
  */
 package panels;
 
+import Entities.Feed;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import javax.swing.ButtonGroup;
+import java.util.ArrayList;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import sucriberss.CellRenderer;
+import sucriberss.HeaderCellRenderer;
+import sucriberss.RSSFeedParser;
 
 /**
  *
@@ -24,16 +24,79 @@ import javax.swing.table.TableColumn;
  * This class render de view
  */
 public class mainPanel extends javax.swing.JPanel {
+    ArrayList<Feed> lt;
+    ArrayList<Feed> ltmensaje = new ArrayList<>();
     Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+    int alto=100;
+    int ancho= 0;
+    int frecuencia=60;
     /**
      * Creates new form mainPanel
      */
     public mainPanel() {
         initComponents();
-        setSize(d.width-20, d.height-40);
+        setSize(d.width, d.height-1);
+        ancho= jScrollPane1.getWidth();
+        JTableHeader jtableHeader = jTable1.getTableHeader();
+        jtableHeader.setDefaultRenderer(new HeaderCellRenderer());
+        jTable1.setTableHeader(  jtableHeader );
+        jTable1.getColumnModel().getColumn(0).setCellRenderer( new CellRenderer("text") );
+        jTable1.getColumnModel().getColumn(2).setCellRenderer( new CellRenderer("text") );
+        
+        TableColumn sportColumn = jTable1.getColumnModel().getColumn(1);
+        JCheckBox comboBox = new JCheckBox();
+        comboBox.setSelected(true);
+        sportColumn.setCellEditor(new DefaultCellEditor(comboBox));
+        sportColumn.setCellRenderer(new CellRenderer("check"));
+        
+        RSSFeedParser rs = new RSSFeedParser();
+        rs.readFeedfile();
+        lt= rs.getLtfeed();
+        llenarlista();
         setVisible(false);
     }
 
+    public class hilorss extends Thread {
+        Feed rss;
+        public hilorss(Feed rss){
+            this.rss=rss;
+        }
+        @Override
+        public void run() {    
+            lectura(rss);
+        }
+    }
+
+    public void lectura(Feed rss){
+        RSSFeedParser parser = new RSSFeedParser(rss.getLink());
+        Feed feed = parser.readFeed();
+        feed.getMessages().stream().forEach((message) -> {
+            rss.getEntries().add(message);
+            ltmensaje.add(rss);
+            System.out.println(message);
+        });
+    }
+    
+    public static void reiniciarJTable(javax.swing.JTable Tabla){
+        DefaultTableModel modelo = (DefaultTableModel) Tabla.getModel();
+        while(modelo.getRowCount()>0)modelo.removeRow(0);
+
+    }
+    
+    public void llenarlista(){
+        reiniciarJTable(jTable1);
+        if(lt!=null){
+            for(Feed i: lt){
+                String c=i.getId();
+                String c1=i.getTitle();
+                DefaultTableModel temp = (DefaultTableModel) jTable1.getModel();
+                Object nuevo[]= {c,false,c1};
+                temp.addRow(nuevo);
+            }
+        }
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

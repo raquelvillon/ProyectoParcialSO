@@ -104,7 +104,12 @@ public class Feed {
     public List<FeedMessage> getEntries() {
         return entries;
     }
-    
+    @Override
+    public String toString() {
+      return "Feed [copyright=" + copyright + "\ndescription=" + description
+          + "\nlanguage=" + language + "\nlink=" + link + "\npubDate="
+          + pubDate + "\ntitle=" + title + "]";
+    }
     
     
 }
