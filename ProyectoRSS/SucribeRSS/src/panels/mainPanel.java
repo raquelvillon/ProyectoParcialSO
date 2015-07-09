@@ -21,6 +21,7 @@ import javax.swing.table.TableColumn;
 /**
  *
  * @author Raquel Villon
+ * This class render de view
  */
 public class mainPanel extends javax.swing.JPanel {
     Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
