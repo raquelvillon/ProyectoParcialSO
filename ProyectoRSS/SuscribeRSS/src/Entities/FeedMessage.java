@@ -16,6 +16,7 @@ public class FeedMessage {
     String link;
     String author;
     String guid;
+    String pubdate;
 
     public String getTitle() {
       return title;
@@ -55,6 +56,14 @@ public class FeedMessage {
 
     public void setGuid(String guid) {
       this.guid = guid;
+    }
+
+    public String getPubdate() {
+        return pubdate;
+    }
+
+    public void setPubdate(String pubdate) {
+        this.pubdate = pubdate;
     }
 
     @Override

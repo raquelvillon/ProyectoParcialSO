@@ -36,6 +36,9 @@ public class mainPanel extends javax.swing.JPanel {
     int ancho= 0;
     int frecuencia=60;
     private ArrayList<Feed> feedlt;
+    
+    
+    ProcessExclusion p[]=null;
     /**
      * Creates new form mainPanel
      */
@@ -54,6 +57,8 @@ public class mainPanel extends javax.swing.JPanel {
         comboBox.setSelected(true);
         sportColumn.setCellEditor(new DefaultCellEditor(comboBox));
         sportColumn.setCellRenderer(new CellRenderer("check"));
+        
+        refreshBtn.setEnabled(false);
         
         RSSFeedParser rs = new RSSFeedParser();
         rs.readFeedfile();
@@ -251,6 +256,7 @@ public class mainPanel extends javax.swing.JPanel {
         
         int numeroRSS=0;
         
+        
         ArrayList<Feed> rsslt=new ArrayList<>();
         feedlt = new ArrayList<>();
 //        recorre la lista de los canales y obtiene solo los que estan marcados
@@ -268,7 +274,10 @@ public class mainPanel extends javax.swing.JPanel {
         BoundedSemaphore semaphore2 = new BoundedSemaphore(numberOfProcesses,1); 
         
 //        lista de hilos
-        ProcessExclusion p[] = new ProcessExclusion[numberOfProcesses];
+        if (p==null) {
+            p = new ProcessExclusion[numberOfProcesses];
+        } 
+         
         
 //        inicializando todos los hilos con sus respectivos canales
         for (int i = 0; i < numberOfProcesses; i++)
@@ -283,16 +292,15 @@ public class mainPanel extends javax.swing.JPanel {
         consumidor.setThreadId(consumidor.hashCode());
         consumidor.start();
         
+        suscribeBtn.setEnabled(false);
+        refreshBtn.setEnabled(true);
+        
         for (int i = 0; i < numberOfProcesses; i++)
         {
             p[i].start();
         }
     }//GEN-LAST:event_suscribeBtnMouseClicked
     
-//    funcion que abre las url y se parsea el contenido xml
-    public void lectura(Feed rss){
-        
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup frecuencyRadioButton;

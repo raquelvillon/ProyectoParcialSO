@@ -104,13 +104,36 @@ public class Consumidor extends Thread
                 try {
                     if(feedlt.get(posicion)!=null){
                         Feed fd = feedlt.remove(posicion);
-                        JLabel lb = new JLabel(fd.getTitle());
-                        lb.setSize(jPanel1.getWidth(), 100);
-                        lb.setLocation(0, (posicion-1)*100);
+                        int pWidth = jPanel1.getWidth()-30;
+                        int pHeigth = (posicion-1)*150;
+                        FeedMessage message = (FeedMessage) fd.getMessages().get(0);
+                                
+                        JLabel lb = new JLabel("<html><b>"+fd.getTitle()+"</b></html>");
+                        JLabel lbTittle = new JLabel("<html><b>"+message.getTitle()+"</b></html>");
+                        JLabel lbDescription = new JLabel("<html><p>"+message.getDescription()+"</p></html>");
+                        JLabel lbPubDate = new JLabel("<html><p style='text-align:right;'>"+message.getPubdate()+"</p></html>");
+                        
+                        
+                        lb.setSize(pWidth, 15);
+                        lbTittle.setSize(pWidth,15);
+                        lbPubDate.setSize(pWidth,15);
+                        lbDescription.setSize(pWidth,80);
+
+                        
+                        lb.setLocation(10,pHeigth );
+                        lbTittle.setLocation(10, pHeigth+15);
+                        lbPubDate.setLocation(10, pHeigth+30);
+                        lbDescription.setLocation(10, pHeigth+45);
+                        
+                        
                         lb.setBackground(Color.white);
                         lb.setForeground(Color.black);
+                        
                         contenedor.add(lb);
-
+                        contenedor.add(lbTittle);
+                        contenedor.add(lbPubDate);
+                        contenedor.add(lbDescription);
+  
                         contenedor.setPreferredSize(new Dimension(jPanel1.getWidth(), (posicion*100)));
                         pane.setViewportView(contenedor);
 
@@ -119,6 +142,7 @@ public class Consumidor extends Thread
                 }catch(Exception io){}
             }
             mutex.release();
+            
         }while(true);
     } catch (Exception e) {
        System.out.println("Exception " + e.toString());

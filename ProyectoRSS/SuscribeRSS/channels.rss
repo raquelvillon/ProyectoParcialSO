@@ -20,15 +20,6 @@
 		<author></author>
 	</channel>
 	<channel>
-		<id>channel8</id>
-		<title>Mozilla Hacks</title>
-		<link>http://feeds.bbci.co.uk/news/rss.xml</link>
-		<description></description>
-		<language>en</language>
-		<image>https://pbs.twimg.com/profile_images/2631319542/aa071efb0ed133973c2ab9fea8b5f6d8_400x400.png</image>
-		<author></author>
-	</channel>
-	<channel>
 		<id>channel2</id>
 		<title>ABC NEWS</title>
 		<link>http://feeds.abcnews.com/abcnews/politicsheadlines</link>
@@ -53,15 +44,6 @@
 		<description></description>
 		<language>en</language>
 		<image>https://css-tricks.com/apple-touch-icon.png</image>
-		<author></author>
-	</channel>
-	<channel>
-		<id>channel6</id>
-		<title>Washington Post</title>
-		<link>http://feeds.washingtonpost.com/rss/rss_election-2012</link>
-		<description></description>
-		<language>en</language>
-		<image>http://img2.wikia.nocookie.net/__cb20140719115207/logopedia/images/c/c4/Washington-post-logo-thumb.jpg</image>
 		<author></author>
 	</channel>
 </channels>
