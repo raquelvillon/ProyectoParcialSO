@@ -262,12 +262,7 @@ public class mainPanel extends javax.swing.JPanel {
     /*Function to get the channels and creating the threads*/
     
     private void suscribeBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suscribeBtnMouseClicked
-        
-        
         int numeroRSS=0;
-        
-        
-        
         feedlt = new ArrayList<>();
 //        recorre la lista de los canales y obtiene solo los que estan marcados
 //        y los agrega a rsslt
@@ -276,19 +271,14 @@ public class mainPanel extends javax.swing.JPanel {
                 rsslt.add(i);
             }
         }
-
         numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
-        
 //        semaforo que permite un solo acceso a la vez
         semaphore = new Semaphore(0, true); 
         semaphore2 = new BoundedSemaphore(numberOfProcesses,0); 
-        
 //        lista de hilos
         if (p==null) {
             p = new Producer[numberOfProcesses];
         } 
-         
-        
 //        inicializando todos los hilos con sus respectivos canales
         for (int i = 0; i < numberOfProcesses; i++)
         {
@@ -297,14 +287,11 @@ public class mainPanel extends javax.swing.JPanel {
           p[i].setFeed(rsslt.get(i));
           p[i].setFeedlt(feedlt);
         }
-        
         consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
         consumidor.setThreadId(consumidor.hashCode());
         consumidor.start();
-        
         suscribeBtn.setEnabled(false);
         refreshBtn.setEnabled(true);
-        
         for (int i = 0; i < numberOfProcesses; i++)
         {
             p[i].start();

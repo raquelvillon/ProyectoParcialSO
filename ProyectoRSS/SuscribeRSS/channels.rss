@@ -29,12 +29,21 @@
 		<author></author>
 	</channel>
 	<channel>
-		<id>channel3</id>
-		<title>TMZ News</title>
-		<link>http://www.tmz.com/rss.xml</link>
+		<id>channel5</id>
+		<title>El Universo Futbol</title>
+		<link>http://www.eluniverso.com/rss/futbol.xml</link>
 		<description></description>
 		<language>en</language>
-		<image>http://screensnark.com/wp-content/uploads/2013/12/tmz-logo_0.jpg</image>
+		<image></image>
+		<author></author>
+	</channel>
+	<channel>
+		<id>channel6</id>
+		<title>El Universo Editoriales</title>
+		<link>http://www.eluniverso.com/rss/editoriales</link>
+		<description></description>
+		<language>en</language>
+		<image></image>
 		<author></author>
 	</channel>
 	<channel>

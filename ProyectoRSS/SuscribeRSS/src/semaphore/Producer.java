@@ -99,8 +99,6 @@ public class Producer extends Thread
                 mutex.release();
                 
                 semaphore.release();
-//                try{sleep(200);
-//                }catch(Exception io){}
            } catch (InterruptedException ex) {
                Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
            }

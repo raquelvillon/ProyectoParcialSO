@@ -100,6 +100,7 @@ public class Consumidor extends Thread
         do{
             semaphore.acquire();
             mutex.take();
+            
             if(feedlt!=null){ 
                 try {
                     if(feedlt.get(posicion)!=null){
@@ -112,19 +113,16 @@ public class Consumidor extends Thread
                         JLabel lbTittle = new JLabel("<html><b>"+message.getTitle()+"</b></html>");
                         JLabel lbDescription = new JLabel("<html><p>"+message.getDescription()+"</p></html>");
                         JLabel lbPubDate = new JLabel("<html><p style='text-align:right;'>"+message.getPubdate()+"</p></html>");
-                        
-                        
+                                                
                         lb.setSize(pWidth, 15);
                         lbTittle.setSize(pWidth,15);
                         lbPubDate.setSize(pWidth,15);
-                        lbDescription.setSize(pWidth,80);
-
+                        lbDescription.setSize(pWidth,100);
                         
                         lb.setLocation(10,pHeigth );
                         lbTittle.setLocation(10, pHeigth+15);
                         lbPubDate.setLocation(10, pHeigth+30);
                         lbDescription.setLocation(10, pHeigth+45);
-                        
                         
                         lb.setBackground(Color.white);
                         lb.setForeground(Color.black);
