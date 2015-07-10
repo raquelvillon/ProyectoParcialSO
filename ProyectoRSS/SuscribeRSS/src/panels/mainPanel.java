@@ -36,9 +36,14 @@ public class mainPanel extends javax.swing.JPanel {
     int ancho= 0;
     int frecuencia=60;
     private ArrayList<Feed> feedlt;
+    int numberOfProcesses;
     
     
     ProcessExclusion p[]=null;
+    Consumidor consumidor = null;
+    Semaphore semaphore;
+    BoundedSemaphore semaphore2;
+    ArrayList<Feed> rsslt=new ArrayList<>();
     /**
      * Creates new form mainPanel
      */
@@ -219,6 +224,11 @@ public class mainPanel extends javax.swing.JPanel {
         add(suscribeBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 440, 90, -1));
 
         refreshBtn.setText("Refresh");
+        refreshBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshBtnMouseClicked(evt);
+            }
+        });
         refreshBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshBtnActionPerformed(evt);
@@ -257,21 +267,21 @@ public class mainPanel extends javax.swing.JPanel {
         int numeroRSS=0;
         
         
-        ArrayList<Feed> rsslt=new ArrayList<>();
+        
         feedlt = new ArrayList<>();
 //        recorre la lista de los canales y obtiene solo los que estan marcados
 //        y los agrega a rsslt
         for(Feed i: lt){
-            if(i.isSubscrito()){
+            if(i.isSubscrito()){    
                 rsslt.add(i);
             }
         }
 
-        final int numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
+        numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
         
 //        semaforo que permite un solo acceso a la vez
-        Semaphore semaphore = new Semaphore(0, true); 
-        BoundedSemaphore semaphore2 = new BoundedSemaphore(numberOfProcesses,1); 
+        semaphore = new Semaphore(0, true); 
+        semaphore2 = new BoundedSemaphore(numberOfProcesses,0); 
         
 //        lista de hilos
         if (p==null) {
@@ -288,7 +298,7 @@ public class mainPanel extends javax.swing.JPanel {
           p[i].setFeedlt(feedlt);
         }
         
-        Consumidor consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
+        consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
         consumidor.setThreadId(consumidor.hashCode());
         consumidor.start();
         
@@ -300,6 +310,25 @@ public class mainPanel extends javax.swing.JPanel {
             p[i].start();
         }
     }//GEN-LAST:event_suscribeBtnMouseClicked
+
+    private void refreshBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshBtnMouseClicked
+        
+        for (int i = 0; i < numberOfProcesses; i++)
+        {
+          p[i] = new ProcessExclusion(semaphore, semaphore2);
+          p[i].setThreadId(p[i].hashCode());
+          p[i].setFeed(rsslt.get(i));
+          p[i].setFeedlt(feedlt);
+        }
+        consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
+        consumidor.setThreadId(consumidor.hashCode());
+        consumidor.start();
+        
+        for (int i = 0; i < numberOfProcesses; i++)
+        {
+            p[i].start();
+        }
+    }//GEN-LAST:event_refreshBtnMouseClicked
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
