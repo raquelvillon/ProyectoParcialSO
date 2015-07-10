@@ -17,7 +17,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import semaphore.BoundedSemaphore;
 import semaphore.Consumidor;
-import semaphore.ProcessExclusion;
+import semaphore.Producer;
 import sucriberss.CellRenderer;
 import sucriberss.HeaderCellRenderer;
 import sucriberss.RSSFeedParser;
@@ -39,7 +39,7 @@ public class mainPanel extends javax.swing.JPanel {
     int numberOfProcesses;
     
     
-    ProcessExclusion p[]=null;
+    Producer p[]=null;
     Consumidor consumidor = null;
     Semaphore semaphore;
     BoundedSemaphore semaphore2;
@@ -285,14 +285,14 @@ public class mainPanel extends javax.swing.JPanel {
         
 //        lista de hilos
         if (p==null) {
-            p = new ProcessExclusion[numberOfProcesses];
+            p = new Producer[numberOfProcesses];
         } 
          
         
 //        inicializando todos los hilos con sus respectivos canales
         for (int i = 0; i < numberOfProcesses; i++)
         {
-          p[i] = new ProcessExclusion(semaphore, semaphore2);
+          p[i] = new Producer(semaphore, semaphore2);
           p[i].setThreadId(p[i].hashCode());
           p[i].setFeed(rsslt.get(i));
           p[i].setFeedlt(feedlt);
@@ -315,7 +315,7 @@ public class mainPanel extends javax.swing.JPanel {
         
         for (int i = 0; i < numberOfProcesses; i++)
         {
-          p[i] = new ProcessExclusion(semaphore, semaphore2);
+          p[i] = new Producer(semaphore, semaphore2);
           p[i].setThreadId(p[i].hashCode());
           p[i].setFeed(rsslt.get(i));
           p[i].setFeedlt(feedlt);

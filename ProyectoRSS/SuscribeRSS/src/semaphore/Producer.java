@@ -18,7 +18,7 @@ import sucriberss.RSSFeedParser;
  *
  * @author Raquel Villon
  */
-public class ProcessExclusion extends Thread
+public class Producer extends Thread
 {
  private int threadId;
  private Semaphore semaphore;
@@ -26,7 +26,7 @@ public class ProcessExclusion extends Thread
  private Feed feed;
  private ArrayList<Feed> feedlt;
  
-    public ProcessExclusion(Semaphore semaphore, BoundedSemaphore mutex) {
+    public Producer(Semaphore semaphore, BoundedSemaphore mutex) {
       this.semaphore = semaphore;
       this.mutex= mutex;
     }
@@ -102,7 +102,7 @@ public class ProcessExclusion extends Thread
 //                try{sleep(200);
 //                }catch(Exception io){}
            } catch (InterruptedException ex) {
-               Logger.getLogger(ProcessExclusion.class.getName()).log(Level.SEVERE, null, ex);
+               Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
            }
        }
     } catch (Exception e) {
