@@ -18,6 +18,7 @@ import javax.swing.table.TableColumn;
 import semaphore.BoundedSemaphore;
 import semaphore.Consumidor;
 import semaphore.Producer;
+import semaphore.refresh;
 import sucriberss.CellRenderer;
 import sucriberss.HeaderCellRenderer;
 import sucriberss.RSSFeedParser;
@@ -261,8 +262,9 @@ public class mainPanel extends javax.swing.JPanel {
     
     /*Function to get the channels and creating the threads*/
     
-    private void suscribeBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suscribeBtnMouseClicked
-        int numeroRSS=0;
+    public void refresh(){
+            int numeroRSS=0;
+        
         feedlt = new ArrayList<>();
 //        recorre la lista de los canales y obtiene solo los que estan marcados
 //        y los agrega a rsslt
@@ -271,14 +273,19 @@ public class mainPanel extends javax.swing.JPanel {
                 rsslt.add(i);
             }
         }
+
         numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
+        
 //        semaforo que permite un solo acceso a la vez
         semaphore = new Semaphore(0, true); 
         semaphore2 = new BoundedSemaphore(numberOfProcesses,0); 
+        
 //        lista de hilos
-        if (p==null) {
+        //if (p==null) {
             p = new Producer[numberOfProcesses];
-        } 
+        //} 
+         
+        
 //        inicializando todos los hilos con sus respectivos canales
         for (int i = 0; i < numberOfProcesses; i++)
         {
@@ -287,19 +294,47 @@ public class mainPanel extends javax.swing.JPanel {
           p[i].setFeed(rsslt.get(i));
           p[i].setFeedlt(feedlt);
         }
+        
         consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
         consumidor.setThreadId(consumidor.hashCode());
         consumidor.start();
-        suscribeBtn.setEnabled(false);
-        refreshBtn.setEnabled(true);
+        
+        //suscribeBtn.setEnabled(false);
+        //refreshBtn.setEnabled(true);
+        
         for (int i = 0; i < numberOfProcesses; i++)
         {
             p[i].start();
         }
-    }//GEN-LAST:event_suscribeBtnMouseClicked
-
-    private void refreshBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshBtnMouseClicked
+    }
+    
+    private void suscribeBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suscribeBtnMouseClicked
         
+        frecuencia= Integer.parseInt(frecuencyRadioButton.getSelection().getActionCommand());
+        int numeroRSS=0;
+        
+        feedlt = new ArrayList<>();
+//        recorre la lista de los canales y obtiene solo los que estan marcados
+//        y los agrega a rsslt
+        for(Feed i: lt){
+            if(i.isSubscrito()){    
+                rsslt.add(i);
+            }
+        }
+
+        numberOfProcesses = rsslt.size(); //cantidad de hilos que se deben crear, uno por cada canalsuscrito
+        
+//        semaforo que permite un solo acceso a la vez
+        semaphore = new Semaphore(0, true); 
+        semaphore2 = new BoundedSemaphore(numberOfProcesses,0); 
+        
+//        lista de hilos
+        if (p==null) {
+            p = new Producer[numberOfProcesses];
+        } 
+         
+        
+//        inicializando todos los hilos con sus respectivos canales
         for (int i = 0; i < numberOfProcesses; i++)
         {
           p[i] = new Producer(semaphore, semaphore2);
@@ -307,15 +342,34 @@ public class mainPanel extends javax.swing.JPanel {
           p[i].setFeed(rsslt.get(i));
           p[i].setFeedlt(feedlt);
         }
+        
         consumidor = new Consumidor(semaphore, semaphore2,jPanel1,feedlt);
         consumidor.setThreadId(consumidor.hashCode());
         consumidor.start();
+        
+        suscribeBtn.setEnabled(false);
+        refreshBtn.setEnabled(true);
         
         for (int i = 0; i < numberOfProcesses; i++)
         {
             p[i].start();
         }
+        
+        new refresh(this).start();
+    }//GEN-LAST:event_suscribeBtnMouseClicked
+
+    private void refreshBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshBtnMouseClicked
+        
+        refresh();
     }//GEN-LAST:event_refreshBtnMouseClicked
+
+    public int getFrecuencia() {
+        return frecuencia;
+    }
+
+    public void setFrecuencia(int frecuencia) {
+        this.frecuencia = frecuencia;
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
