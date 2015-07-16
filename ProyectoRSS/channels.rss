@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channels>
+	<channel>
+		<id>channel7</id>
+		<title>prMac</title>
+		<link>http://prmac.com/rss</link>
+		<description></description>
+		<language>en</language>
+		<image>http://a.dryicons.com/images/icon_sets/colorful_stickers_icons_set/png/256x256/rss.png</image>
+		<author></author>
+	</channel>
+	<channel>
+		<id>channel1</id>
+		<title>BBC News</title>
+		<link>http://feeds.bbci.co.uk/news/rss.xml</link>
+		<description></description>
+		<language>en</language>
+		<image>http://www.totallyjewish.com/siteimages/news/bbcnews_50x50.gif</image>
+		<author></author>
+	</channel>
+	<channel>
+		<id>channel2</id>
+		<title>ABC NEWS</title>
+		<link>http://feeds.abcnews.com/abcnews/politicsheadlines</link>
+		<description></description>
+		<language>en</language>
+		<image>https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Abc_2013_logo_blue.svg/50px-Abc_2013_logo_blue.svg.png</image>
+		<author></author>
+	</channel>
+	<channel>
+		<id>channel5</id>
+		<title>El Universo Futbol</title>
+		<link>http://www.eluniverso.com/rss/futbol.xml</link>
+		<description></description>
+		<language>en</language>
+		<image></image>
+		<author></author>
+	</channel>
+	<channel>
+		<id>channel6</id>
+		<title>El Universo Editoriales</title>
+		<link>http://www.eluniverso.com/rss/editoriales</link>
+		<description></description>
+		<language>en</language>
+		<image></image>
+		<author></author>
+	</channel>
+	<channel>
+		<id>channel4</id>
+		<title>CSS-Tricks</title>
+		<link>http://feeds.feedburner.com/CssTricks</link>
+		<description></description>
+		<language>en</language>
+		<image>https://css-tricks.com/apple-touch-icon.png</image>
+		<author></author>
+	</channel>
+</channels>
+</rss>
+
